@@ -22,4 +22,4 @@
   ![code1](doc/images/비밀번호재확인viewpng.png)
   ![code2](doc/images/일정조회view.png)
   ![code3](doc/images/공지사항검색view.png)
-  ![code4](doc/images/트레이너일정view.png)
+
