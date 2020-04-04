@@ -13,6 +13,6 @@
 * version control system : GitHub
 * API : quillAPI, fullCalendar4.3.1, 1:1문의 채팅 api, 카카오 결제 api
 
-* **Request/Response Scatter Chart** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
+* **뷰 및 코드 소개** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
 
-  ![main](doc/images/ss_server-map.png)
+  ![main](doc/images/메인.png)
