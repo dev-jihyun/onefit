@@ -10,3 +10,7 @@
 * UI-design Tool : kakaoOven
 * Library : MyBatis, Maven, Bootstrap4, jQuery 3.4.1
 * version control system : GitHub
+
+* **Request/Response Scatter Chart** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
+
+  ![main](doc/images/ss_server-map.png)
