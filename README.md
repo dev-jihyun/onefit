@@ -20,6 +20,6 @@
   ![schedule2](doc/images/일정view.png)
   ![board](doc/images/게시판view.png)
   ![code1](doc/images/비밀번호재확인viewpng.png)
-  ![code2](doc/images/일정조회view.png)
+  ![code2](doc/images/일정조회view2.png)
   ![code3](doc/images/공지사항검색view.png)
 
