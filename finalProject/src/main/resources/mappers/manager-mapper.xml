@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="managerMapper">
+	<resultMap id="userResultSet" type="User">
+		<id property="userNum" column="USER_NUM"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userPwd" column="USER_PWD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="birthDate" column="BIRTH"/>
+		<result property="email" column="EMAIL"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="loginDate" column="LOGIN_DATE"/>
+		<result property="startDate" column="START_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="status" column="STATUS"/>
+		
+		<!-- 건강정보 -->
+		<result property="healthNum" column="HEALTH_NUM"/>
+		<result property="height" column="HEIGHT"/>
+		<result property="weight" column="WEIGHT"/>
+		<result property="fat" column="FAT"/>
+		<result property="goal" column="GOAL"/>
+		<result property="reason" column="REASON"/>
+		<result property="checkDate" column="CHECK_DATE"/>
+		
+		<!-- 프로필사진 -->
+		<result property="photoNum" column="PHOTO_NUM"/>
+		<result property="orgName" column="ORG_NAME"/>
+		<result property="chName" column="CH_NAME"/>
+		<result property="cate" column="CATE"/>
+		<result property="numbs" column="NUMBS"/>
+		<result property="age" column="AGE"/>
+		
+		<!-- 트레이너, PT정보 -->
+		<result property="trNum" column="TR_NUM"/>
+  		<result property="count" column="COUNT"/>
+  		<result property="totalCount" column="TOTAL_COUNT"/>
+  		<result property="trName" column="TR_NAME"/>
+	</resultMap>
+	
+
+	<!-- 회원 SELECT 문 -->
+	<select id="chkatt" parameterType="User" resultMap="userResultSet">
+		SELECT *
+        FROM NO_USER U
+		WHERE U.USER_ID=#{userId} AND U.STATUS!='5'
+	</select>
+	
+</mapper>

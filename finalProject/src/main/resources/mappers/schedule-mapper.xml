@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="scheduleMapper">
+  
+  <resultMap id="scheduleResultSet" type="Schedule">
+  	<id property="scNum" column="SC_NUM"/>
+	<result property="scDate" column="SC_DATE"/>
+  	<result property="scStart" column="SC_START"/>
+	<result property="scEnd" column="SC_END"/>
+	<result property="cate" column="CATE"/>
+  	<result property="content" column="CONTENT"/>
+  	<result property="userNum" column="USER_NUM"/>
+  	<result property="trNum" column="TR_NUM"/>
+  	<result property="ptmName" column="USER_NAME"/>
+</resultMap> 
+
+	
+	<!-- 관리자 페이지 회원관리용 -->
+	<select id="selectList" resultMap="scheduleResultSet">
+		SELECT *
+		FROM SCHEDULE S
+		JOIN NO_USER USING(USER_NUM)
+		WHERE TR_NUM=#{trNum}
+	</select>
+	
+	<insert id="insertSchedule">
+	INSERT INTO SCHEDULE
+	VALUES(SQ_SCHEDULE.NEXTVAL, TO_DATE(#{ptTime}, 'YYYY-MM-DD HH24:MI:SS'),
+	<!-- PT시작시간 -->
+	TO_DATE(#{ptTime}, 'YYYY-MM-DD HH24:MI:SS'),
+	<!-- 끝나는시간 1시간 더하기 -->
+	TO_DATE(#{ptTime}, 'YYYY-MM-DD HH24:MI:SS') + (INTERVAL '01:00' HOUR TO MINUTE),
+	
+	1, 'PT예약', #{userNum}, #{trNum})
+	</insert>
+	
+	<delete id="deleteSchedule">
+		DELETE SCHEDULE
+		WHERE SC_NUM=#{scNum}
+	</delete>
+		<!-- 관리자 페이지 회원관리용 -->
+	<select id="selectList2" resultMap="scheduleResultSet">
+		SELECT *
+		FROM SCHEDULE S
+		JOIN NO_USER USING(USER_NUM)
+		WHERE TR_NUM=#{trNum}
+	</select>
+	
+	
+</mapper>

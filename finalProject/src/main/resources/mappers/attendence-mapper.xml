@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="attendenceMapper">
+
+	<resultMap id="attendenceSelect" type="Attendence">
+		<result property="atNum" column="AT_NUM"/>
+		<result property="atDate" column="AT_DATE"/>
+		<result property="userNum" column="USER_NUM"/>
+		<result property="content" column="CONTENT"/>	    
+	</resultMap>
+
+	<!-- 출석체크 -->
+	<select id="selectList" parameterType="Attendence" resultMap="attendenceSelect">
+		SELECT *
+		FROM ATTENDENCE
+		WHERE USER_NUM=#{userNum}		
+	</select>
+	
+	<insert id="insertAtt">
+		INSERT INTO ATTENDENCE
+		VALUES(SQ_ATTENDANCE.NEXTVAL,DEFAULT,#{userNum},DEFAULT)
+	</insert>
+
+
+
+
+
+
+
+
+
+
+</mapper>

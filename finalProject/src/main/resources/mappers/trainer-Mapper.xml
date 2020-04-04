@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="trainMapper">
+  
+  <resultMap id="trainerHealth" type="Health">
+  	<!-- 건강정보 -->
+  	<id property="healthNum" column="HEALTH_NUM"/>
+  	<result property="userNum" column="USER_NUM"/>
+  	<result property="height" column="HEIGHT"/>
+  	<result property="weight" column="WEIGHT"/>
+  	<result property="fat" column="FAT"/>
+  	<result property="goal" column="GOAL"/>
+  	<result property="reason" column="REASON"/>
+  	<result property="checkDate" column="CHECK_DATE"/>
+  	<result property="cate" column="CATE"/>
+  </resultMap>
+  
+    <resultMap id="trainerLesson" type="TrainerLesson">
+  	<!-- 트레이너 수업정보 -->
+  	<result property="userNum" column="USER_NUM"/>
+  	<result property="userName" column="USER_NAME"/>
+  	<result property="phone" column="PHONE"/>
+  	<result property="trNum" column="TR_NUM"/>
+  	<result property="count" column="COUNT"/>
+  	<result property="totalCount" column="TOTAL_COUNT"/>
+  	<result property="scNum" column="SC_NUM"/>
+  	<result property="scDate" column="SC_DATE"/>
+  	<result property="scStart" column="SC_START"/>
+  	<result property="scEnd" column="SC_END"/>
+  	<result property="scStartString" column="SC_START_STRING"/>
+  	<result property="scEndtString" column="SC_END_STRING"/>
+  	<result property="chName" column="CH_NAME" />
+  </resultMap>
+  
+  <resultMap id="trainerProfile" type="Photo">
+  	<id property="photoNum" column="PHOTO_NUM"/>
+  	<result property="orgName" column="ORG_NAME"/>
+  	<result property="chName" column="CH_NAME"/>
+  	<result property="cate" column="CATE"/>
+  	<result property="numbs" column="NUMBS"/>
+  </resultMap>
+  
+  <resultMap type="TrainerMemberList" id="trainerMemberList">
+  	<result property="userNum" column="USER_NUM" />
+  	<result property="userName" column="USER_NAME" />
+  	<result property="phone" column="PHONE" />
+  	<result property="count" column="COUNT" />
+  	<result property="totalCount" column="TOTAL_COUNT" />
+  	<result property="trNum" column="TR_NUM" />
+  	<result property="payDate" column="PAY_DATE" />
+  	<result property="chName" column="CH_NAME" />
+  </resultMap>
+  
+  <resultMap type="TrainerMemberHealth" id="trainerMemberHealth">
+  	<result property="userNum" column="USER_NUM" />
+  	<result property="chName" column="CH_NAME" />
+  	<result property="userName" column="USER_NAME" />
+  	<result property="birth" column="BIRTH" />
+  	<result property="gender" column="GENDER" />
+  	<result property="height" column="HEIGHT" />
+  	<result property="weight" column="WEIGHT" />
+  	<result property="goal" column="GOAL" />
+  	<result property="count" column="COUNT" />
+  	<result property="totalCount" column="TOTAL_COUNT" />
+  	<result property="checkDate" column="CHECK_DATE" />
+  	<result property="trNum" column="TR_NUM" />
+  	<result property="age" column="AGE" />
+  	<result property="fat" column="FAT" />
+  </resultMap>
+  
+  
+     <resultMap id="TrainerInFos" type="TrainerInFos">
+     <!-- 트레이너 정보 가져오기 위해서 -->
+      <id property="trNum" column="TR_NUM"/>
+      <result property="career" column="CAREER"/>
+      <result property="trPwd" column="TR_PWD"/>
+      <result property="chName" column="CH_NAME"/>
+      <result property="cate" column="CATE"/>
+      <result property="numbs" column="NUMBS"/>
+      <result property="trName" column="TR_NAME"/>
+   </resultMap>
+   
+   <resultMap id="trainerResultSet" type="ManagerTrainer">
+       <id property="trNum" column="TR_NUM"/>
+      <result property="trId" column="TR_ID"/>
+      <result property="trPwd" column="TR_PWD"/>
+      <result property="trName" column="TR_NAME"/>
+      <result property="phone" column="PHONE"/>
+      <result property="email" column="EMAIL"/>
+      <result property="enrollDate" column="ENROLL_DATE"/>
+      <result property="gender" column="GENDER"/>
+      <result property="modifyDate" column="MODIFY_DATE"/>
+      <result property="carrer" column="CAREER"/>
+      <result property="status" column="STATUS"/>
+      <result property="scNum" column="SC_NUM"/>
+      <result property="scDate" column="SC_DATE"/>
+      <result property="scStart" column="SC_START"/>
+      <result property="scEnd" column="SC_END"/>
+      <result property="cate" column="CATE"/>
+      <result property="content" column="CONTENT"/>
+      <result property="userNum" column="USER_NUM"/>
+      <result property="height" column="HEIGHT"/>
+      <result property="weight" column="WEIGHT"/>
+      <result property="fat" column="FAT"/>
+   </resultMap>
+  
+  
+  
+  
+  
+  
+  <!-- 트레이너의 건강정보를 받기 위해서 -->
+  <select id="getHealthInform" parameterType="_int" resultMap="trainerHealth">
+  	SELECT * 
+  	FROM HEALTH 
+  	WHERE CATE=2 AND USER_NUM=#{trNum}
+  </select>
+	<!-- 트레이너의  오늘 수업 정보를 가져오기 위해서 -->
+	<select id="getTodayTrainerLesson" parameterType="_int" resultMap="trainerLesson">
+		SELECT USER_NUM,USER_NAME,PHONE,TR_NUM,COUNT,TOTAL_COUNT,SC_NUM,SC_DATE,SC_START,SC_END,TO_CHAR(SC_START, 'HH24:MI') AS SC_START_STRING,
+		TO_CHAR(SC_END, 'HH24:MI') AS SC_END_STRING
+		FROM MEMBER_TRAIN_SCHEDULE
+		WHERE TR_NUM=#{ trNum } AND TO_CHAR(SC_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD')
+		ORDER BY SC_START_STRING
+	</select>
+	
+	<!-- 트레이너의 프로필 사진을 가져오기 위해서 -->
+	<select id="getProfile" parameterType="_int" resultMap="trainerProfile">
+		SELECT * 
+		FROM PHOTO
+		WHERE CATE=2 AND NUMBS=#{trNum}
+	</select>
+	
+	<!-- 트레이너 정보 업데이트 하기 위해 -->
+	<update id="updateTrainer" parameterType="Trainer">
+		UPDATE TRAINER
+	  	SET TR_NAME=#{trName}, PHONE=#{phone},EMAIL=#{email},CAREER=#{career},MODIFY_DATE=SYSDATE,TR_PWD=#{trPwd},GENDER=#{gender}
+	  	WHERE TR_ID=#{trId}
+	</update>
+	<!-- 트레이너 사진 정보 업데이트를 위해 -->
+	<update id="updatePhoto" parameterType="Photo">
+		UPDATE PHOTO
+		SET ORG_NAME=#{orgName},CH_NAME=#{chName}
+		WHERE CATE=2 AND NUMBS=#{numbs}
+	</update>
+	<!-- 총 회원의 정보를 가져오는 부분 -->
+	<select id="getMemberList" parameterType="_int" resultMap="trainerMemberList">
+		SELECT *
+		FROM TRAINER_MEMBER_INFORM
+		WHERE TR_NUM=#{trNum}
+		ORDER BY USER_NUM
+	</select>
+	
+	<!-- 트레이너 회원의 정보를 가져오는 부분 -->
+	<select id="getMemberHealth" parameterType="_int" resultMap="trainerMemberHealth">
+		SELECT USER_NUM,CH_NAME,USER_NAME,BIRTH,HEIGHT,WEIGHT,FAT,GOAL,TOTAL_COUNT,CHECK_DATE,TR_NUM,
+		MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(BIRTH,'YEAR')) /12 +1 AS AGE
+		FROM TRAINER_MEMBER_HEALTH
+		WHERE TR_NUM=#{TR_NUM}
+	</select>
+	
+	<!-- 트레이너의 총 회원수를 가져오는 부분 -->
+	<select id="getListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*)
+		FROM TRAINER_MEMBER_INFORM
+		WHERE TR_NUM=#{trNum}
+	</select>
+	
+	<!-- 트레이너 정보 가져오기 위해서 -->
+	<select id="selectList" resultMap="TrainerInFos">
+		SELECT TR_NAME,CAREER,CH_NAME,CATE,NUMBS,TR_NUM
+		FROM TRAINERTINFO      
+		
+	
+	</select>
+	
+	<!-- 해당 회원의 건강정보를 받아오기 위해서 -->
+	<select id="memberHealth" parameterType="_int" resultMap="trainerMemberHealth">
+		SELECT USER_NUM,CH_NAME,USER_NAME,BIRTH,HEIGHT,WEIGHT,FAT,GOAL,TOTAL_COUNT,CHECK_DATE,TR_NUM,
+		MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(BIRTH,'YEAR')) /12 +1 AS AGE,REASON
+		FROM TRAINER_MEMBER_HEALTH
+		WHERE USER_NUM=#{userNum}		
+	</select>
+	
+	<!-- 해당 회원의 건강 정보를 수정하기 위해서 -->
+	<update id="updateMemberHealth" parameterType="TrainerMemberHealth">
+       MERGE INTO HEALTH
+         USING DUAL ON (USER_NUM = #{userNum})
+      WHEN MATCHED THEN
+          UPDATE SET  WEIGHT=#{weight}, HEIGHT=#{height}, FAT=#{fat},REASON=#{reason},GOAL=#{goal},CHECK_DATE=SYSDATE
+      WHEN NOT MATCHED THEN
+          INSERT (WEIGHT,HEIGHT,USER_NUM,HEALTH_NUM,GOAL,REASON,FAT,CATE,CHECK_DATE) 
+          VALUES(#{weight},#{height},#{userNum},SQ_HEALTH.NEXTVAL,#{goal},#{reason},#{fat},1,SYSDATE)
+	</update>
+	
+	<!-- 검색된 이름을 가진 사람의 개수 -->
+	<select id="searchNameCount" parameterType="Trainer" resultType="_int">
+		SELECT COUNT(*)
+		FROM TRAINER_MEMBER_INFORM
+		WHERE TR_NUM=#{trNum} AND USER_NAME LIKE '%'+#{trName}+'%'
+	</select>
+	
+	<select id="searchNameList" resultMap="trainerMemberList" parameterType="Trainer">
+		SELECT *
+		FROM TRAINER_MEMBER_INFORM
+		WHERE TR_NUM=#{trNum} AND USER_NAME LIKE '%'+#{trName}+'%'
+		ORDER BY USER_NUM 
+	</select>
+	
+	<select id="getLessonCount" parameterType="TrainerLesson" resultType="_int">
+		SELECT COUNT(*)
+		FROM MEMBER_TRAIN_SCHEDULE
+		WHERE TR_NUM=#{ trNum } AND TO_CHAR(SC_DATE,'YYYYMMDD') = TO_CHAR(TO_DATE(#{scDateString},'YYYY/MM/DD'),'YYYYMMDD')
+	</select>
+	
+	<select id="traineLessonList" parameterType="TrainerLesson" resultMap="trainerLesson">
+		SELECT USER_NUM,USER_NAME,PHONE,TR_NUM,COUNT,TOTAL_COUNT,SC_NUM,SC_DATE,SC_START,SC_END,TO_CHAR(SC_START, 'HH24:MI') AS SC_START_STRING,
+		TO_CHAR(SC_END, 'HH24:MI') AS SC_END_STRING,CH_NAME
+		FROM MEMBER_TRAIN_SCHEDULE
+		WHERE TR_NUM=#{trNum} AND TO_CHAR(SC_DATE,'YYYYMMDD') = TO_CHAR(TO_DATE(#{scDateString},'YYYY/MM/DD'),'YYYYMMDD')
+		ORDER BY SC_START_STRING		
+	</select>
+	
+	<!-- 관리자용 트레이너 명 수 조회 -->
+	<select id="getTrainerListCount"  resultType="_int">
+		SELECT COUNT(*)
+		FROM TRAINER
+		WHERE STATUS='Y'
+	</select>
+	
+	<!-- 관리자용 트레이너 리스트조회 -->
+	<select id="MselectList" resultMap="trainerResultSet">
+		SELECT t.TR_NUM,t.TR_ID,t.TR_NAME,t.TR_PWD,t.PHONE,t.EMAIL,t.ENROLL_DATE,t.GENDER,t.MODIFY_DATE,t.CAREER,t.STATUS
+		<!-- s.sc_num,s.sc_date,s.sc_start,s.sc_end,s.cate,s.content,s.tr_num,s.user_num, -->
+		<!-- h.health_num,h.user_num,h.height,h.weight,h.fat -->
+		FROM TRAINER t
+		<!-- LEFT JOIN SCHEDULE s ON(t.TR_NUM = s.TR_NUM) -->
+        <!-- JOIN HEALTH h ON(t.TR_NUM = h.USER_NUM) -->
+        <!-- WHERE h.CATE = 2 -->
+		ORDER BY t.TR_NUM
+	</select>
+	
+</mapper>
