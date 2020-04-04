@@ -54,7 +54,7 @@
   ![board](doc/images/게시판view.png)
   ![code3](doc/images/공지사항검색view.png)  
   
-* **게시판** - 개인정보 수정시 ajax활용하여 비밀번호 입력 후 정보수정 페이지로 갈 수 있습니다.  
+* **개인정보 수정** - 개인정보 수정시 ajax활용하여 비밀번호 입력 후 정보수정 페이지로 갈 수 있습니다.  
   ![code1](doc/images/비밀번호재확인viewpng.png)
 
 
