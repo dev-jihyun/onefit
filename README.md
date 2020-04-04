@@ -16,3 +16,10 @@
 * **뷰 및 코드 소개** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
 
   ![main](doc/images/메인.png)
+  ![schedule](doc/images/트레이너일정view.png)
+  ![schedule2](doc/images/일정view.png)
+  ![board](doc/images/게시판view.png)
+  ![code1](doc/images/비밀번호재확인viewpng.png)
+  ![code2](doc/images/일정조회view.png)
+  ![code3](doc/images/공지사항검색view.png)
+  ![code4](doc/images/트레이너일정view.png)
