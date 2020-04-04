@@ -1,6 +1,7 @@
 # onefit
 * 원핏은 피트니스 관리 프로그램입니다. 아날로그식의 헬스장 운영을 관리하기 편한 프로그램으로 만들었습니다. 일정관리, 회원관리, 트레이너관리, 예약기능이 제공됩니다.
 * 제작기간 : 2개월
+* 제작인원 : 4명
 
 ## Supported Modules
 * OS : window10
@@ -13,7 +14,7 @@
 * version control system : GitHub
 * API : quillAPI, fullCalendar4.3.1, 1:1문의 채팅 api, 카카오 결제 api
 
-* **뷰 및 코드 소개** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
+**뷰 및 코드 소개** - Visualize request count and response patterns over time to identify potential problems. Transactions can be selected for additional detail by **dragging over the chart**.
 
   ![main](doc/images/메인.png)
   ![schedule](doc/images/트레이너일정view.png)
