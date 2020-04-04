@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ptMapper">
+  
+  <resultMap id="ptMemberResultSet" type="PTMember">
+  	<id property="userNum" column="USER_NUM"/>
+	<result property="userId" column="USER_ID"/>
+  	<result property="userPwd" column="USER_PWD"/>
+  	<result property="userName" column="USER_NAME"/>
+	<result property="phone" column="PHONE"/>
+	<result property="birth" column="BIRTH"/>
+  	<result property="email" column="EMAIL"/>
+  	<result property="enrollDate" column="ENROLL_DATE"/>
+  	<result property="gender" column="GENDER"/>
+  	<result property="modifyDate" column="MODIFY_DATE"/>
+  	<result property="loginDate" column="LOGIN_DATE"/>
+  	<result property="startDate" column="START_DATE"/>
+  	<result property="endDate" column="END_DATE"/>
+  	<result property="status" column="STATUS"/>
+  	
+  	<!-- 건강정보 -->
+  	<result property="healthNum" column="HEALTH_NUM"/>
+  	<result property="height" column="HEIGHT"/>
+  	<result property="weight" column="WEIGHT"/>
+  	<result property="fat" column="FAT"/>
+  	<result property="goal" column="GOAL"/>
+  	<result property="reason" column="REASON"/>
+  	<result property="checkDate" column="CHECK_DATE"/>
+  	
+  	<!-- 트레이너, PT정보 -->
+  	<result property="trNum" column="TR_NUM"/>
+  	<result property="count" column="COUNT"/>
+  	<result property="totalCount" column="TOTAL_COUNT"/>
+  	<result property="trName" column="TR_NAME"/>
+  	
+  	<!-- 프사정보 -->
+  	<result property="photoNum" column="PHOTO_NUM"/>
+  	<result property="orgName" column="ORG_NAME"/>
+  	<result property="chName" column="CH_NAME"/>
+  	<result property="cate" column="CATE"/>
+  </resultMap>
+  
+  
+  <!-- 비번확인용 객체는 User로 만들어도 되니까~ -->
+  <resultMap id="UserResultSet" type="User">
+  	<id property="userNum" column="USER_NUM"/>
+	<result property="userId" column="USER_ID"/>
+  	<result property="userPwd" column="USER_PWD"/>
+	<result property="userName" column="USER_NAME"/>
+	<result property="phone" column="PHONE"/>
+	<result property="birth" column="BIRTH"/>
+  	<result property="email" column="EMAIL"/>
+  	<result property="enrollDate" column="ENROLL_DATE"/>
+  	<result property="gender" column="GENDER"/>
+  	<result property="modifyDate" column="MODIFY_DATE"/>
+  	<result property="loginDate" column="LOGIN_DATE"/>
+  	<result property="startDate" column="START_DATE"/>
+  	<result property="endDate" column="END_DATE"/>
+  	<result property="status" column="STATUS"/>
+</resultMap> 
+	<!-- 마이페이지 조회 -->
+	<select id="selectMypage" resultMap="ptMemberResultSet">
+		SELECT * 
+		FROM NO_USER
+		JOIN PT USING(USER_NUM)
+		LEFT JOIN TRAINER USING(TR_NUM)
+        LEFT JOIN PHOTO P ON(P.NUMBS=USER_NUM)
+		WHERE USER_NUM=#{userNum}
+	</select>
+
+	<select id="selectUser" resultMap="UserResultSet">
+		SELECT USER_NUM, USER_ID, USER_PWD FROM NO_USER
+		WHERE USER_NUM=#{userNum} AND STATUS NOT IN(4, 5)
+	</select>
+	
+	<update id="ptUpdateMember" parameterType="PTMember">
+		UPDATE NO_USER
+		SET USER_NAME=#{userName}, PHONE=#{phone}, BIRTH=TO_DATE(#{birth},'YYYYMMDD'),
+		GENDER=#{gender}, MODIFY_DATE=SYSDATE
+		WHERE USER_NUM=#{userNum}
+	</update>
+	
+	<update id="ptUpdatePhoto" parameterType="PTMember">
+		UPDATE PHOTO
+		SET CH_NAME=#{chName}, ORG_NAME=#{orgName}
+		WHERE NUMBS=#{userNum}
+	</update>
+	
+	<!-- 관리자 페이지 회원관리용 -->
+	<select id="selectList" resultMap="ptMemberResultSet">
+		 SELECT
+		U.USER_NUM,U.USER_ID, U.USER_PWD,U.USER_NAME,U.PHONE,U.BIRTH,U.EMAIL,U.ENROLL_DATE,U.GENDER,U.MODIFY_DATE,U.LOGIN_DATE,U.START_DATE,U.END_DATE,U.STATUS,
+		<!-- H.HEALTH_NUM ,H.HEIGHT,H.WEIGHT,H.FAT,H.GOAL,H.REASON,H.CHECK_DATE, -->
+		P.PHOTO_NUM,P.ORG_NAME,P.CH_NAME,P.CATE,P.NUMBS,MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(U.BIRTH,'YEAR')) /12 +1 AS AGE,
+        T.TR_NUM, PT.COUNT, PT.TOTAL_COUNT, T.TR_NAME
+        
+        FROM NO_USER U
+		LEFT JOIN PT PT ON(U.USER_NUM=PT.USER_NUM)
+		<!-- LEFT JOIN HEALTH H ON(H.USER_NUM=U.USER_NUM) -->
+		
+		LEFT JOIN PHOTO P ON(P.NUMBS=U.USER_NUM)
+		
+		LEFT JOIN TRAINER T ON(PT.TR_NUM=T.TR_NUM)
+		WHERE P.CATE = '1'
+        and NOT USER_ID = 'manager'
+        AND U.STATUS != 4
+        ORDER BY USER_NUM DESC
+        <!-- 건강정보는 트레이너와 공유하기때문에 회원번호가 겹칩니다.
+		그래서 컨트롤러에서 health를 따로가져옵니다. -->
+	</select>
+</mapper>

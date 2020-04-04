@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userMapper">
+  
+<resultMap id="userMemberResultSet" type="User">
+		<id property="userNum" column="USER_NUM"/>
+		<result property="userId" column="USER_ID"/>    
+		<result property="userPwd" column="USER_PWD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="birthDate" column="BIRTH"/>    
+		<result property="email" column="EMAIL"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="loginDate" column="LOGIN_DATE"/>
+		<result property="startDate" column="START_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="status" column="STATUS"/>
+		
+		<result property="healthNum" column="HEALTH_NUM"/>
+		<result property="height" column="HEIGHT"/>
+		<result property="weight" column="WEIGHT"/>
+		<result property="fat" column="FAT"/>
+		<result property="goal" column="GOAL"/>
+		<result property="reason" column="REASON"/>
+		<result property="checkDate" column="CHECK_DATE"/>
+		
+		<result property="photoNum" column="PHOTO_NUM"/>
+		<result property="orgName" column="ORG_NAME"/>
+		<result property="chName" column="CH_NAME"/>
+		<result property="cate" column="CATE"/>
+		<result property="numbs" column="NUMBS"/>
+		<result property="age" column="AGE"/>
+		
+		<!-- 트레이너, PT정보 -->
+		<result property="trNum" column="TR_NUM"/>
+  		<result property="count" column="COUNT"/>
+  		<result property="totalCount" column="TOTAL_COUNT"/>
+  		<result property="trName" column="TR_NAME"/>
+	</resultMap>
+
+<!-- 비번확인용 객체는 User로 만들어도 되니까~ -->
+  <resultMap id="UserResultSet" type="User">
+  	<id property="userNum" column="USER_NUM"/>
+	<result property="userId" column="USER_ID"/>
+  	<result property="userPwd" column="USER_PWD"/>
+  	</resultMap>
+
+	<!-- 회원 정보 수정 -->
+	<update id="userUpdate" parameterType="User">
+		UPDATE NO_USER
+		SET USER_NAME=#{userName}, PHONE=#{phone}, USER_PWD=#{userPwd},
+		<!-- 일단 보류 BIRTH=#{birth}, -->
+		MODIFY_DATE=SYSDATE
+		WHERE USER_NUM=#{userNum}
+	</update>
+
+	<update id="updatePhoto" parameterType="User">
+		UPDATE PHOTO
+		SET CH_NAME=#{chName}, ORG_NAME=#{orgName}
+		WHERE NUMBS=#{userNum}
+	</update>
+	
+	<!-- 회원 탈퇴 -->
+  	<update id="deleteUser" parameterType="_int">
+	  	UPDATE NO_USER
+	  	SET STATUS=5
+	  	WHERE USER_NUM=#{userNum}
+  	</update>
+  	
+  	<!-- 회원 가입 -->
+  	<insert id="insertUser" parameterType="User">
+  	INSERT INTO NO_USER
+  	VALUES (SQ_USER.NEXTVAL,#{userId},#{userPwd},#{userName},#{phone},TO_DATE(#{birth},'YYYYMMDD'),#{email},SYSDATE,#{gender}
+  			,SYSDATE,NULL,NULL,NULL, DEFAULT) 
+  	
+  	</insert>
+  	<!-- 아이디 중복 체크 -->
+	<select id="idCheck" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM NO_USER
+		WHERE USER_ID=#{id}
+	</select> 	
+	<!-- 회원번호 가져오는 부분 -->
+  	<select id="getUserNum" parameterType="string" resultType="_int">
+  		SELECT USER_NUM
+  		FROM NO_USER
+  		WHERE USER_ID=#{userId}
+  	</select>
+  	<!-- 프로필 사진 저장 부분 -->
+  	<insert id="insertPhoto" parameterType="Photo">
+  		INSERT INTO PHOTO VALUES(SQ_PHOTO.NEXTVAL,#{orgName},#{chName},#{cate},#{numbs})
+  	</insert>
+  	<!-- 이메일 인증 안한것에서 인증한걸로 바꿔주는 부분 -->
+  	<update id="updateStatus" parameterType="string">
+  		UPDATE NO_USER SET STATUS=3 WHERE USER_ID=#{userId}
+  	</update>
+  	
+  	<!-- 마이페이지에서 비밀번호 확인용 -->
+  	<select id="selectUser" resultMap="UserResultSet">
+		SELECT USER_NUM, USER_ID, USER_PWD FROM NO_USER
+		WHERE USER_NUM=#{userNum}
+	</select>
+	
+	<!-- 마이페이지 조회용 -->
+	<select id="selectMyPage" resultMap="userMemberResultSet">
+		SELECT *
+		FROM NO_USER
+		JOIN HEALTH USING(USER_NUM)
+		LEFT JOIN PHOTO P ON(P.NUMBS=USER_NUM)
+		WHERE USER_NUM = #{userNum}
+	</select>
+	
+	<!-- 몸정보 수정 -->
+	<update id="bodyUpdate" parameterType="User">
+		 MERGE INTO HEALTH
+			USING DUAL ON (USER_NUM = #{userNum} AND CATE = 1)
+		WHEN MATCHED THEN
+    		UPDATE SET
+    		WEIGHT=#{weight}, HEIGHT=#{height},
+    		FAT=ROUND(#{weight} / #{height} / #{height} * 10000)
+    		
+		WHEN NOT MATCHED THEN
+    		INSERT (WEIGHT,HEIGHT,USER_NUM,HEALTH_NUM, FAT, CATE) 
+    		VALUES(#{weight},#{height},#{userNum},SQ_HEALTH.NEXTVAL,ROUND(#{weight} / #{height} / #{height} * 10000), 1)
+	</update>
+	
+	<!-- user정보 수정 (비밀번호 입혁하지 않았을 때) -->
+	<update id="userUpdate1" parameterType="User">
+		UPDATE NO_USER
+		SET USER_NAME=#{userName},PHONE=#{phone},MODIFY_DATE=SYSDATE
+		WHERE USER_NUM=#{userNum}
+	</update>
+	
+	
+	<!-- 몸정보 수정할때 필요한 user의 모든 정보 -->
+	<select id="selectUser1" resultMap="userMemberResultSet">
+<!-- 		SELECT USER_NUM,USER_ID,USER_PWD,USER_NAME,PHONE,BIRTH,EMAIL,ENROLL_DATE,GENDER,MODIFY_DATE,LOGIN_DATE,START_DATE,END_DATE,STATUS,HEALTH_NUM
+		,HEIGHT,WEIGHT,FAT,GOAL,REASON,CHECK_DATE,PHOTO_NUM,ORG_NAME,CH_NAME,CATE,NUMBS,MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(BIRTH,'YEAR')) /12 +1 AS AGE
+		FROM NO_USER
+		LEFT JOIN HEALTH USING(USER_NUM)
+		LEFT JOIN PHOTO P ON(P.NUMBS=USER_NUM)
+		WHERE USER_NUM = #{userNum} -->
+		
+		SELECT
+		<!-- 유저정보 -->
+		U.USER_NUM,U.USER_ID, U.USER_PWD,U.USER_NAME,U.PHONE,U.BIRTH,U.EMAIL,U.ENROLL_DATE,U.GENDER,U.MODIFY_DATE,U.LOGIN_DATE,U.START_DATE,U.END_DATE,U.STATUS,
+		<!-- 건강정보 -->
+		<!-- H.HEALTH_NUM ,H.HEIGHT,H.WEIGHT,H.FAT,H.GOAL,H.REASON,H.CHECK_DATE, -->
+		<!-- 사진, 나이 -->
+		P.PHOTO_NUM,P.ORG_NAME,P.CH_NAME,P.CATE,P.NUMBS,MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(U.BIRTH,'YEAR')) /12 +1 AS AGE,
+        <!-- 트레이너/pt정보 -->
+        T.TR_NUM, PT.COUNT, PT.TOTAL_COUNT, T.TR_NAME
+        
+        FROM NO_USER U
+		LEFT JOIN PT PT ON(U.USER_NUM=PT.USER_NUM)
+		<!-- LEFT JOIN HEALTH H ON(H.USER_NUM=U.USER_NUM) -->
+		LEFT JOIN PHOTO P ON(P.NUMBS=U.USER_NUM)
+		LEFT JOIN TRAINER T ON(PT.TR_NUM=T.TR_NUM)
+		WHERE U.USER_NUM=#{userNum} AND P.CATE=1
+		<!-- 건강정보는 트레이너와 공유하기때문에 회원번호가 겹칩니다.
+		그래서 health에서 따로가져옵니다. -->
+	</select>
+	
+	<!-- 결제 정보 저장  -->
+	<insert id="insertPay" parameterType="Payment">
+		INSERT INTO PAYMENT VALUES(SQ_PAYMENT.NEXTVAL,#{price},SYSDATE,#{cate},#{userNum})
+	</insert>
+	
+	<!-- status3인 사람이 일반회원으로 결제 -->
+	<update id="userUser" parameterType="Payment">
+		UPDATE NO_USER
+		SET START_DATE = SYSDATE, END_DATE= ADD_MONTHS(SYSDATE,#{month}),STATUS = 1
+		WHERE USER_NUM = #{userNum}
+	</update>
+	
+	<!-- 일반회원이 일반회원으로 연장 -->
+	<update id="userUser1" parameterType="Payment">
+		UPDATE NO_USER
+		SET END_DATE= ADD_MONTHS(END_DATE,#{month})
+		WHERE USER_NUM = #{userNum}
+	</update>
+	
+	<!-- 일반회원이 pt회원으로 결제 -->
+	<insert id="userPt" parameterType="Payment">
+		INSERT INTO PT VALUES(#{userNum},#{trNum},#{ptMonth},#{ptMonth})
+	</insert>
+	
+	<!-- status1->2로바꾸기 -->
+	<update id="updateStatus2" parameterType="Payment"> 
+		UPDATE NO_USER
+		SET STATUS=2, START_DATE=SYSDATE
+		WHERE USER_NUM = #{userNum}
+	</update>
+	
+	<!-- status3->2바꾸기 -->
+	<update id="updateStatus3" parameterType="Payment"> 
+		UPDATE NO_USER
+		SET STATUS=2
+		WHERE USER_NUM = #{userNum}
+	</update>
+	
+	<!-- PT회원이 PT회원으로 결제 (연장) -->
+	<update id="ptPt" parameterType="Payment">
+		UPDATE PT
+		SET COUNT = COUNT+#{ptMonth}, TOTAL_COUNT=TOTAL_COUNT+#{ptMonth}
+		WHERE USER_NUM=#{userNum}
+	</update>
+	
+</mapper>

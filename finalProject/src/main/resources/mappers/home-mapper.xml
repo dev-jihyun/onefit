@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="homeMapper">
+	<resultMap id="userResultSet" type="User">
+		<id property="userNum" column="USER_NUM"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userPwd" column="USER_PWD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="birthDate" column="BIRTH"/>
+		<result property="email" column="EMAIL"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="loginDate" column="LOGIN_DATE"/>
+		<result property="startDate" column="START_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="status" column="STATUS"/>
+		
+		<!-- 건강정보 -->
+		<result property="healthNum" column="HEALTH_NUM"/>
+		<result property="height" column="HEIGHT"/>
+		<result property="weight" column="WEIGHT"/>
+		<result property="fat" column="FAT"/>
+		<result property="goal" column="GOAL"/>
+		<result property="reason" column="REASON"/>
+		<result property="checkDate" column="CHECK_DATE"/>
+		
+		<!-- 프로필사진 -->
+		<result property="photoNum" column="PHOTO_NUM"/>
+		<result property="orgName" column="ORG_NAME"/>
+		<result property="chName" column="CH_NAME"/>
+		<result property="cate" column="CATE"/>
+		<result property="numbs" column="NUMBS"/>
+		<result property="age" column="AGE"/>
+		
+		<!-- 트레이너, PT정보 -->
+		<result property="trNum" column="TR_NUM"/>
+  		<result property="count" column="COUNT"/>
+  		<result property="totalCount" column="TOTAL_COUNT"/>
+  		<result property="trName" column="TR_NAME"/>
+	</resultMap>
+	
+	<resultMap id="trainerResultSet" type="Trainer">
+		<id property="trNum" column="TR_NUM"/>
+		<result property="trId" column="TR_ID"/>
+		<result property="trPwd" column="TR_PWD"/>
+		<result property="trName" column="TR_NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="career" column="CAREER"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>	
+	<!-- 회원 SELECT 문 -->
+	<select id="loginUser" parameterType="User" resultMap="userResultSet">
+		SELECT
+		<!-- 유저정보 -->
+		U.USER_NUM,U.USER_ID, U.USER_PWD,U.USER_NAME,U.PHONE,U.BIRTH,U.EMAIL,U.ENROLL_DATE,U.GENDER,U.MODIFY_DATE,U.LOGIN_DATE,U.START_DATE,U.END_DATE,U.STATUS,
+		<!-- 사진, 나이 -->
+		P.PHOTO_NUM,P.ORG_NAME,P.CH_NAME,P.CATE,P.NUMBS,MONTHS_BETWEEN(TRUNC(SYSDATE,'YEAR'),TRUNC(U.BIRTH,'YEAR')) /12 +1 AS AGE,
+        <!-- 트레이너/pt정보 -->
+        T.TR_NUM, PT.COUNT, PT.TOTAL_COUNT, T.TR_NAME
+        
+        FROM NO_USER U
+		LEFT JOIN PT PT ON(U.USER_NUM=PT.USER_NUM)
+		
+		LEFT JOIN PHOTO P ON(P.NUMBS=U.USER_NUM)
+		
+		LEFT JOIN TRAINER T ON(PT.TR_NUM=T.TR_NUM)
+		WHERE U.USER_ID=#{userId} AND U.STATUS!='5' AND P.CATE = '1'
+	</select>
+	<!-- 트레이너 SELECT 문 -->
+	<select id="loginTrainer" parameterType="Trainer" resultMap="trainerResultSet">
+		SELECT * 
+		FROM TRAINER
+		WHERE TR_ID=#{trId} AND TR_PWD=#{trPwd} AND STATUS='Y'
+	</select>
+	<update id="updateLoginDate">
+		UPDATE NO_USER
+		SET LOGIN_DATE=SYSDATE
+		WHERE USER_NUM=#{userNum}
+	</update>
+</mapper>

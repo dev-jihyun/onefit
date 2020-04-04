@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="noticeMapper">
+	<resultMap id="noticeResultSet" type="Notice">
+		<id property="noticeNum" column="NOTICE_NUM"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="writeDate" column="WRITE_DATE"/>
+		<result property="userNum" column="USER_NUM"/>
+		<result property="count" column="COUNT"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>
+	
+	<select id="getListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM NOTICE
+		WHERE STATUS='Y'
+	</select>
+	
+	<select id="selectList" resultMap="noticeResultSet">
+	<!-- 내용없이 가져오기 -->
+		SELECT NOTICE_NUM, TITLE, WRITE_DATE, COUNT,CONTENT
+		FROM NOTICE
+		WHERE STATUS='Y'
+		ORDER BY NOTICE_NUM DESC	
+	</select>
+
+	<insert id="insertNotice" parameterType="Notice">
+		INSERT INTO NOTICE VALUES(
+			SQ_NOTICE.NEXTVAL, #{title}, #{content},
+			SYSDATE, #{userNum}, DEFAULT, DEFAULT
+		)
+	</insert>
+	
+	<update id="updateCount" parameterType="_int">
+		UPDATE NOTICE
+		SET COUNT = COUNT + 1
+		WHERE NOTICE_NUM=#{noticeNum}
+	</update>
+	
+	<select id="selectOne" resultMap="noticeResultSet">
+		SELECT *
+		FROM NOTICE
+		WHERE NOTICE_NUM=#{noticeNum}
+		AND STATUS='Y'
+	</select>
+	
+	<update id="updateNotice" parameterType="Notice">
+		UPDATE NOTICE
+		SET BTITLE=#{title}, BCONTENT=#{content}, 
+		WHERE NOTICE_NUM=#{noticeNum}
+	</update>
+	
+	
+	<select id="selectTopList" resultMap="noticeResultSet">
+		SELECT *
+		FROM(SELECT * 
+			 FROM NOTICE
+			 ORDER BY COUNT DESC, NOTICE_NUM)
+		WHERE STATUS = 'Y'
+		AND ROWNUM <![CDATA[<=]]> 5
+	</select>
+	
+	<!-- 공지사항 검색용 쿼리 (마이바티스 동적 쿼리 사용) -->
+ 	<select id="searchList" parameterType="com.kh.finalProject.common.model.vo.Search" resultMap="noticeResultSet">
+		<bind name="sv" value="'%' + _parameter.getSearchValue() + '%'"/>
+		SELECT * FROM NOTICE
+		<where>
+			<choose>
+				<when test="searchCondition == 'title'">
+					AND TITLE LIKE #{sv}
+				</when>
+				<when test="searchCondition == 'content'">
+					<!-- AND CONTENT LIKE #{sv} -->
+					AND contains(CONTENT, #{searchValue}) > 0
+				</when>
+				<otherwise>
+					AND (
+					TITLE LIKE #{sv}
+					OR contains(CONTENT, #{searchValue}) > 0
+					<!-- OR CONTENT LIKE #{sv} -->
+					)
+				</otherwise>
+			</choose>
+				AND STATUS='Y'
+		</where>
+		ORDER BY NOTICE_NUM DESC
+	</select>
+	
+	<select id="getListCountSearch" resultType="_int">
+		<bind name="sv" value="'%' + _parameter.getSearchValue() + '%'"/>
+		SELECT COUNT(*) FROM NOTICE
+		<where>
+			<choose>
+				<when test="searchCondition == 'title'">
+					AND TITLE LIKE #{sv}
+				</when>
+				<when test="searchCondition == 'content'">
+					<!-- AND CONTENT LIKE #{sv} -->
+					AND contains(CONTENT, #{searchValue}) > 0
+				</when>
+				<otherwise>
+					AND (
+					TITLE LIKE #{sv}
+					OR contains(CONTENT, #{searchValue}) > 0
+					<!-- OR CONTENT LIKE #{sv} -->
+					)
+				</otherwise>
+			</choose>
+				AND STATUS='Y'
+		</where>
+		ORDER BY NOTICE_NUM DESC
+	</select>
+
+	<update id="deleteNotice" parameterType="_int">
+		UPDATE NOTICE
+		SET STATUS = 'N'
+		WHERE NOTICE_NUM=#{num}
+	</update>
+</mapper>

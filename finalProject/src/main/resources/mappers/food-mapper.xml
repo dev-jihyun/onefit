@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="foodMapper">
+
+  <resultMap id="foodResultSet" type="Food">
+  	<id property="foodNum" column="FOOD_NUM"/>
+  	<result property="carbo" column="CARBO"/>
+  	<result property="prot" column="PROT"/>
+  	<result property="fat" column="FAT"/>
+  	<result property="meal" column="MEAL"/>
+  	<result property="memo" column="MEMO"/>
+  	<result property="userNum" column="USER_NUM"/>
+  	<result property="trainNum" column="TR_NUM"/>
+  </resultMap>
+
+<!-- 회원 건강정보를 담은 것 -->
+  <resultMap type="TrainerMemberHealth" id="trainerMemberHealth">
+  	<result property="userNum" column="USER_NUM" />
+  	<result property="chName" column="CH_NAME" />
+  	<result property="userName" column="USER_NAME" />
+  	<result property="birth" column="BIRTH" />
+  	<result property="gender" column="GENDER" />
+  	<result property="height" column="HEIGHT" />
+  	<result property="weight" column="WEIGHT" />
+  	<result property="goal" column="GOAL" />
+  	<result property="count" column="COUNT" />
+  	<result property="totalCount" column="TOTAL_COUNT" />
+  	<result property="checkDate" column="CHECK_DATE" />
+  	<result property="trNum" column="TR_NUM" />
+  	<result property="age" column="AGE" />
+  	<result property="fat" column="FAT" />
+  </resultMap>	
+	<!-- 끼니 정보를 담기 위해 -->
+	<resultMap type="MealInfo" id="MealResultMap">
+	  	<id property="mNum" column="M_NUM"/>
+	  	<result property="foodNum" column="FOOD_NUM"/>
+	  	<result property="oneMeal" column="MEAL"/>
+	  	<result property="oneCarbo" column="CARBO"/>
+	  	<result property="onePro" column="PRO"/>
+	  	<result property="oneFat" column="FAT"/>
+	  	<result property="cate" column="CATE"/>
+	</resultMap>
+	
+	<!-- pt회원 식단리스트 조회 -->
+	<select id="selectList" resultMap="foodResultSet">
+		SELECT *
+		FROM FOOD
+		WHERE USER_NUM=#{userNum}
+	</select>
+
+	<!-- pt회원수를 가져오기 위해서 -->
+	<select id="getListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*)
+		FROM TRAINER_MEMBER_HEALTH
+		WHERE TR_NUM=#{trNum}	
+	</select>
+	
+	<!-- pt회원 리스트를 뽑기 위해서 -->
+	<select id="getMemberList" resultMap="trainerMemberHealth">
+		SELECT *
+		FROM TRAINER_MEMBER_HEALTH
+		WHERE TR_NUM=#{trNum}
+	</select>
+	
+	<!-- 회원의 식단 정보를 받아오기 위해서 -->
+	<select id="getFoodInfo" parameterType="Food" resultMap="foodResultSet">
+		SELECT *
+		FROM FOOD
+		WHERE USER_NUM=#{userNum} AND TR_NUM=#{trainNum}
+	</select>
+	
+	<!-- 회원의 끼니 정보를 가져오기 위해서 -->
+	<select id="getMealInfo" parameterType="_int" resultMap="MealResultMap">
+		SELECT *
+		FROM MEAL_INFO
+		WHERE FOOD_NUM=#{foodNum}
+		ORDER BY M_NUM
+	</select>
+	
+	<!-- 식단 정보를 입력하기 위해서 -->
+	<insert id="insert" parameterType="Food">
+       MERGE INTO FOOD
+         USING DUAL ON (FOOD_NUM =#{foodNum})
+      WHEN MATCHED THEN
+          UPDATE SET  CARBO=#{carbo}, PROT=#{prot},FAT=#{fat},MEMO=#{memo}
+      WHEN NOT MATCHED THEN
+          INSERT (FOOD_NUM,CARBO,PROT,FAT,MEAL,MEMO,USER_NUM,TR_NUM) 
+          VALUES(SQ_FOOD.NEXTVAL,#{carbo},#{prot},#{fat},DEFAULT,#{memo},#{userNum},#{trainNum})			
+	</insert>
+	<!-- 끼니 정보 입력하기 위해서 -->
+	<insert id="insertMealInfo" parameterType="MealInfo">
+		  INSERT INTO MEAL_INFO VALUES(SQ_MEAL.NEXTVAL,SQ_FOOD.CURRVAL,#{oneMeal},#{oneCarbo},#{onePro},#{oneFat},DEFAULT)	
+	</insert>
+	<!-- 끼니 정보를 업데이트하기 위해서 -->
+	<insert id="updateMealInfo" parameterType="MealInfo">
+       MERGE INTO MEAL_INFO
+         USING DUAL ON (M_NUM =#{mNum})
+      WHEN MATCHED THEN
+          UPDATE SET  MEAL=#{oneMeal}, CARBO=#{oneCarbo},PRO=#{onePro},FAT=#{oneFat}
+      WHEN NOT MATCHED THEN
+          INSERT (M_NUM,FOOD_NUM,MEAL,CARBO,PRO,FAT,CATE) 
+          VALUES(SQ_MEAL.NEXTVAL,#{foodNum},#{oneMeal},#{oneCarbo},#{onePro},#{oneFat},DEFAULT)	
+	</insert>
+	
+	<delete id="delMeal" parameterType="_int">
+		DELETE FROM MEAL_INFO
+		WHERE M_NUM = #{mNum}	
+	</delete>
+</mapper>

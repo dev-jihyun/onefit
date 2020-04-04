@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="questionMapper">
+
+  <resultMap id="questionResultSet" type="Question">
+  	<id property="askNum" column="ASK_NUM"/>
+  	<result property="title" column="TITLE"/>
+  	<result property="content" column="CONTENT"/>
+  	<result property="writeDate" column="WRITE_DATE"/>
+  	<result property="answer" column="ANSWER"/>
+  	<result property="answerDate" column="ANSWER_DATE"/>
+  	<result property="cate" column="CATE"/>
+  	<result property="writer" column="WRITER"/>
+  	<result property="userNum" column="USER_NUM"/>
+  	<!-- 글삭제여부 -->
+  	<result property="status" column="STATUS"/>
+  	<!-- 답변여부 -->
+  	<result property="astatus" column="ASTATUS"/>
+  	<!-- <result property="filePath" column="TR_NUM"/>
+  	<result property="originalFileName" column="ORG_NAME"/>
+  	<result property="renameFileName" column="CH_NAME"/> -->
+  	<result property="userId" column="USER_ID"/>
+  	
+  </resultMap>
+	
+	<select id="getListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM QUESTION
+	</select>
+	
+	<select id="selectList" resultMap="questionResultSet">
+	<!-- 관리자용 -->
+	<!-- 내용없이 가져오기 -->
+		SELECT Q.ASK_NUM, Q.TITLE, Q.WRITE_DATE, Q.CATE, Q.ASTATUS, U.USER_ID, Q.CONTENT, Q.ANSWER, Q.ANSWER_DATE
+		FROM QUESTION Q
+		JOIN NO_USER U ON(U.USER_NUM=Q.USER_NUM)
+		WHERE Q.CATE=1 AND Q.STATUS='Y'
+		ORDER BY Q.ASK_NUM DESC
+	</select>
+	
+	<select id="selectUserQnaList" resultMap="questionResultSet">
+	<!-- 회원용 문의글 가져오기(내가쓴글만) -->
+		SELECT Q.ASK_NUM, Q.TITLE, Q.WRITE_DATE, Q.CATE, Q.ASTATUS, U.USER_ID
+		FROM QUESTION Q
+		JOIN NO_USER U ON(U.USER_NUM=Q.USER_NUM)
+		WHERE Q.USER_NUM = #{userNum} AND Q.STATUS='Y'
+		ORDER BY Q.ASK_NUM DESC
+		
+	</select>
+
+	<!-- 글삽입 -->
+	<insert id="insertQuestion">
+		INSERT INTO QUESTION
+		VALUES(SQ_QUESTION.NEXTVAL, #{title}, #{content}, SYSDATE, NULL, NULL, #{cate}, NULL, #{userNum}, DEFAULT, DEFAULT )
+	</insert>
+	
+	<!-- 글 하나 조회 -->
+	<select id="selectOne" resultMap="questionResultSet">
+		SELECT  Q.ASK_NUM, Q.TITLE, Q.WRITE_DATE,Q.CONTENT, Q.ASTATUS,  Q.CATE, Q.WRITER, Q.ANSWER, Q.ANSWER_DATE, Q.STATUS
+		FROM QUESTION Q
+		WHERE Q.ASK_NUM=#{askNum}
+		AND Q.STATUS='Y'
+	</select>
+	
+	<!-- 글삭제 -->
+	<update id="deleteOne" parameterType="_int">
+		UPDATE QUESTION
+		SET STATUS = 'N'
+		WHERE ASK_NUM=#{askNum}
+	</update>
+	
+	<select id="selectTrainer" resultType="string">
+	SELECT TR_NAME
+	FROM TRAINER
+	WHERE TR_NUM=#{trNum}
+	</select>
+	
+	<update id="updateReply2">
+		UPDATE QUESTION
+    	SET ANSWER = #{answer}, ANSWER_DATE = SYSDATE, ASTATUS='Y'
+		WHERE ASK_NUM = #{askNum}
+	</update>
+	
+	<update id="updateQuestion">
+		UPDATE QUESTION
+		SET CONTENT = #{content}, TITLE=#{title}, CATE=#{cate}
+		WHERE ASK_NUM = #{askNum}
+	</update>
+</mapper>

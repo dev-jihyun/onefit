@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="healthMapper">
+
+  <resultMap id="HealthResultSet" type="Health">
+  	<id property="healthNum" column="HEALTH_NUM"/>
+  	<result property="userNum" column="USER_NUM"/>
+  	<result property="height" column="HEIGHT"/>
+  	<result property="weight" column="WEIGHT"/>
+  	<result property="fat" column="FAT"/>
+  	<result property="goal" column="GOAL"/>
+  	<result property="reason" column="REASON"/>
+  	<result property="checkDate" column="CHECK_DATE"/>
+  </resultMap>
+	
+	<!-- 트레이너의 건강정보 입력 -->
+	<insert id="insertTrainerHealth" parameterType="Health">
+		INSERT INTO HEALTH VALUES(SQ_HEALTH.NEXTVAL,#{userNum},#{height},#{weight},#{fat},NULL,NULL,SYSDATE,2)
+	</insert>
+	
+	<!-- 트레이너의 건강정보 수정 -->
+	<update id="updateTrainerHealth" parameterType="Health">
+		UPDATE HEALTH
+		SET WEIGHT=#{weight},HEIGHT=#{height},FAT=#{fat}
+		WHERE USER_NUM=#{userNum} AND CATE=2
+	</update>
+	
+	<!-- 로그인할 때 일반유저 건강정보 셀렉 -->
+	<select id="selectHealth" resultMap="HealthResultSet">
+		SELECT *
+		FROM HEALTH
+		WHERE USER_NUM=#{userNum} AND CATE = 1
+	</select>
+	<select id="selectTrainerHealth" resultMap="HealthResultSet">
+		SELECT *
+		FROM HEALTH
+		WHERE USER_NUM=#{trNum} AND CATE = 2
+	</select>
+</mapper>

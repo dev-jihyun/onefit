@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+	<!--	만약에 null로 데이터가 전달 되었다면 빈칸이 아닌 NULL로 인식 -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.kh.finalProject.user.model.vo.User" alias="User"/>
+		<typeAlias type="com.kh.finalProject.health.model.vo.Health" alias="Health"/>
+		<typeAlias type="com.kh.finalProject.ptMember.model.vo.PTMember" alias="PTMember"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.Trainer" alias="Trainer"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.TrainerLesson" alias="TrainerLesson"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.TrainerMemberList" alias="TrainerMemberList"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.TrainerMemberHealth" alias="TrainerMemberHealth"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.TrainerInfos" alias="TrainerInfos"/>
+		<typeAlias type="com.kh.finalProject.payment.model.vo.Payment" alias="Payment"/> 
+		<typeAlias type="com.kh.finalProject.food.model.vo.MealInfo" alias="MealInfo"/>  
+		<typeAlias type="com.kh.finalProject.food.model.vo.Food" alias="Food"/>
+		<typeAlias type="com.kh.finalProject.common.model.vo.Photo" alias="Photo"/>
+		<typeAlias type="com.kh.finalProject.question.model.vo.Question" alias="Question"/>
+		<typeAlias type="com.kh.finalProject.notice.model.vo.Notice" alias="Notice"/>
+		<typeAlias type="com.kh.finalProject.excercise.model.vo.Excercise" alias="Excercise"/>
+		<typeAlias type="com.kh.finalProject.excercise.model.vo.ExcerciseContent" alias="ExcerciseContent"/>
+		<typeAlias type="com.kh.finalProject.schedule.model.vo.Schedule" alias="Schedule"/>
+		<typeAlias type="com.kh.finalProject.train.model.vo.ManagerTrainer" alias="ManagerTrainer"/>
+		<typeAlias type="com.kh.finalProject.attendence.model.vo.Attendence" alias="Attendence"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mappers/user-mapper.xml"/>    
+		<mapper resource="mappers/health-mapper.xml"/>
+		<mapper resource="mappers/pt-mapper.xml"/>
+		<mapper resource="mappers/home-mapper.xml"/>
+		<mapper resource="mappers/food-mapper.xml"/>
+		<mapper resource="mappers/trainer-Mapper.xml"/>
+		<mapper resource="mappers/question-mapper.xml"/>
+		<mapper resource="mappers/notice-mapper.xml"/>
+		<mapper resource="mappers/excercise-mapper.xml"/>
+		<mapper resource="mappers/schedule-mapper.xml"/>
+		<mapper resource="mappers/manager-mapper.xml"/>
+		<mapper resource="mappers/attendence-mapper.xml"/>	
+	</mappers>
+</configuration>

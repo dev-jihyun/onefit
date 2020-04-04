@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="excerciseMapper">
+
+	<resultMap id="memberExcercise" type="Excercise">
+		<!-- 운동일지 -->
+		<result property="jrNum" column="JR_NUM" />
+		<result property="jrDate" column="JR_DATE" />
+		<result property="exPart" column="EX_PART" />
+		<result property="trNum" column="TR_NUM" />
+		<result property="userNum" column="USER_NUM" />
+		<result property="oneLine" column="ONELINE" />
+	</resultMap>
+
+	<resultMap id="memberExcerciseContent"
+		type="ExcerciseContent">
+		<!-- 운동 종목 -->
+		<result property="exNum" column="EX_NUM" />
+		<result property="jrNum" column="JR_NUM" />
+		<result property="eName" column="ENAME" />
+		<result property="count" column="COUNT" />
+		<result property="set" column="SETT" />
+		<result property="memo" column="MEMO" />
+	</resultMap>
+
+	<!--count가 0인 PT회원의 회원 정보를 담기 위해서 -->
+	<resultMap id="userNum" type="User">
+		<id property="userNum" column="USER_NUM" />
+		<result property="startDate" column="START_DATE" />
+		<result property="endDate" column="END_DATE" />
+	</resultMap>
+
+	<!-- PT회원의 운동일지리스트 조회 -->
+	<resultMap id="excerciseListResultSet" type="Excercise">
+		<!-- 운동일지 -->
+		<id property="jrNum" column="JR_NUM" />
+		<result property="jrDate" column="JR_DATE" />
+		<result property="exPart" column="EX_PART" />
+		<result property="trNum" column="TR_NUM" />
+		<result property="userNum" column="USER_NUM" />
+		<result property="oneLine" column="ONELINE" />
+		<!-- 운동종목리스트 추가 -->
+		<collection property="eclist" javaType="java.util.ArrayList"
+		resultMap="memberExcerciseContent"/>
+	</resultMap>
+
+
+	<!-- 해당 회원의 운동일지를 가져오기 위해 -->
+	<select id="getExcercise" parameterType="Excercise"
+		resultMap="memberExcercise">
+		SELECT *
+		FROM JOURNEY
+		WHERE TR_NUM=#{trNum} AND USER_NUM=#{userNum}
+		AND
+		TO_CHAR(#{jrDate},'YYYYMMDD') = TO_CHAR(JR_DATE,'YYYYMMDD')
+	</select>
+
+	<!-- 운동일지의 운동 종목을 가져오기 위해서 -->
+	<select id="getExcerciseContent" parameterType="_int"
+		resultMap="memberExcerciseContent">
+		SELECT *
+		FROM EX_CONTENT
+		WHERE JR_NUM=#{jrNum}
+	</select>
+
+	<!-- 운동일지를 저장 하기 위해 --> <!-- 있으면 수정하고 없으면 저장 -->
+	<update id="insertExcercise" parameterType="Excercise">
+		MERGE INTO JOURNEY
+		USING DUAL ON (JR_NUM =#{jrNum})
+		WHEN MATCHED THEN
+		UPDATE SET EX_PART=#{exPart}, ONELINE=#{oneLine}
+		WHEN NOT MATCHED THEN
+		INSERT (JR_NUM,JR_DATE,EX_PART,TR_NUM,USER_NUM,ONELINE)
+		VALUES(SQ_JOURNEY.NEXTVAL,#{jrDate},#{exPart},#{trNum},#{userNum},#{oneLine})
+	</update>
+
+	<!-- 운동 종목 저장하는 부분... -->
+	<insert id="insertExcerciseContent"
+		parameterType="ExcerciseContent">
+		INSERT INTO EX_CONTENT
+		VALUES(SQ_EXCERCISE.NEXTVAL,SQ_JOURNEY.CURRVAL,#{eName},#{count},#{set},#{memo})
+	</insert>
+
+	<!-- 출석후 count 하나 깎는 부분 -->
+	<update id="decCount" parameterType="_int">
+		UPDATE PT
+		SET COUNT = COUNT-1
+		WHERE USER_NUM=#{userNum}
+	</update>
+
+	<!-- cont가 0인 애들의 헬스장 시작 날짜와 끝나는 날짜 조회 -->
+	<select id="getDelMember" resultMap="userNum">
+		SELECT
+		USER_NUM,START_DATE,END_DATE
+		FROM PT P
+		LEFT JOIN NO_USER N
+		USING(USER_NUM)
+		WHERE P.COUNT = 0
+		AND N.START_DATE IS NOT NULL AND N.END_DATE IS NOT NULL
+	</select>
+	<!-- count가 0인 사람들 시작 날짜와 종료 날짜 수정하기 위해서 -->
+	<update id="updateDate" parameterType="java.util.List">
+		<foreach collection="list" item="user" separator=";"
+			index="index">
+			UPDATE NO_USER
+			SET STATUS=1,
+			START_DATE=#{user.startDate},
+			END_DATE=#{user.endDate}
+			WHERE
+			USER_NUM=#{user.userNum}
+		</foreach>
+	</update>
+
+	<!-- count가 0인 회원 PT테이블에서 삭제 -->
+	<delete id="delPt">
+		DELETE FROM PT
+		WHERE COUNT = 0
+	</delete>
+
+	<!-- 운동일지 수정 -->
+	<update id="updateExcercise" parameterType="Excercise">
+		UPDATE JOURNEY
+		SET
+		EX_PART=#{exPart},ONELINE=#{oneLine}
+		WHERE TR_NUM=#{trNum} AND
+		USER_NUM=#{userNum} AND JR_DATE=#{jrDate}
+	</update>
+	<!-- 운동 종목 수정 -->
+	<update id="updateExcerContent" parameterType="ExcerciseContent">
+		MERGE INTO EX_CONTENT
+		USING DUAL ON (EX_NUM =#{exNum})
+		WHEN MATCHED THEN
+		UPDATE SET ENAME=#{eName}, COUNT=#{count}, SETT=#{set}, MEMO=#{memo}
+		WHERE EX_NUM=#{exNum}
+		WHEN NOT MATCHED THEN
+		INSERT (EX_NUM,JR_NUM,ENAME,COUNT,SETT,MEMO)
+		VALUES(SQ_EXCERCISE.NEXTVAL,#{jrNum},#{eName},#{count},#{set},#{memo})
+	</update>
+	<!-- 운동 종목 삭제하기 위해서 -->
+	<delete id="delExcontent" parameterType="_int">
+		DELETE FROM EX_CONTENT
+		WHERE EX_NUM = #{exNum}
+	</delete>
+
+	<!-- pt회원의 운동일지 조회 -->
+	<select id="selectList" resultMap="excerciseListResultSet">
+		SELECT * FROM
+		JOURNEY J
+		LEFT JOIN EX_CONTENT E using(JR_NUM)
+		WHERE USER_NUM=#{userNum}
+	</select>
+		<!-- 해당 회원의 운동일지를 가져오기 위해 -->
+	<select id="selectPtExcercise" parameterType="_int" resultMap="excerciseListResultSet">
+		SELECT * FROM
+		JOURNEY J
+		LEFT JOIN EX_CONTENT E using(JR_NUM)
+		WHERE USER_NUM=#{userNum}
+	</select>
+</mapper>
