@@ -7,14 +7,14 @@
 |  <center>구분</center> |  <center>내용</center> |
 |:--------|:--------|
 |**OS** | window |
-|**개발환경** | Java 1.8, eclipse 2018-09, oracle 11g R2, SpringFramework 5.2.2, STS 3.9.11, HTML5, CSS, JavaScript, Ajax |
+|**개발환경** | Java 1.8, eclipse 2018-09, SpringFramework 5.2.2, Spring Framework 5.2.2, Javascript, Ajax, HTML5, CSS |
 |**DB** | Oracle 11g, sql Developer |
 |**WAS** | Apache Tomcat 8 |
 |**DB-design Tool** | Erdcloud |
 |**UI-design Tool** | kakaoOven |
 |**Library** | MyBatis, Maven, Bootstrap4, jQuery 3.4.1 |
 |**형상관리** | GitHub |
-|**API** | quillAPI(텍스트 에디터), fullCalendar4.3.1(달력 API), 1:1문의 채팅 api, 카카오 결제 api |
+|**API** | QuillAPI(텍스트 에디터), fullCalendar4.3.1(달력 API), 1:1문의 채팅 api, 카카오 결제 api |
 
 ## 주요이슈
 * 일정 선택 조건 설정에 중점을 두어 개발하였습니다.
@@ -38,7 +38,7 @@
   - 프로필 사진 변경
   - 정보수정
 * 게시판
-  - 1대1문의게시판 : PT회원인 경우, 내 트레이너에게만 문의할 수 있는 기능 / 관리자 답변 등록 / 답변 달리면 수정, 삭제 불가.
+  - 1대1문의게시판 : PT회원인 경우 내 트레이너에게만 문의할 수 있는 기능 / 관리자 답변 등록 / 답변 달리면 수정, 삭제 불가.
   - 공지사항
 * PT일정 : 내 트레이너의 예약 조회, 예약 추가, 예약 삭제
 * 트레이너 일정 : 내가 관리하는 회원의 예약 조회, 삭제
