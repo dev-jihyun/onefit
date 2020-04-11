@@ -13,7 +13,7 @@
 |**DB-design Tool** | Erdcloud |
 |**UI-design Tool** | kakaoOven |
 |**Library** | MyBatis, Maven, Bootstrap4, jQuery 3.4.1 |
-|**version control system** | GitHub |
+|**형상관리** | GitHub |
 |**API** | quillAPI(텍스트 에디터), fullCalendar4.3.1(달력 API), 1:1문의 채팅 api, 카카오 결제 api |
 
 ## 주요이슈
