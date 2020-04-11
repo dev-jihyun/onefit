@@ -50,60 +50,61 @@
   ![main](doc/images/메인.png)
   
 ```java
-			User Check = new User(userId, password);
-			User user = hService.loginUser(Check);
+// 일반 회원과 pt회윈 구분
+User Check = new User(userId, password);
+User user = hService.loginUser(Check);
 
-			System.out.println("loginUser : " + user);
-			if (user != null) { // 회원테이블에 존재 할때
-				// 건강 정보 셀렉.
-				Health h = healthService.selectHealth(user.getUserNum());
-				if (h != null) {
-					// 유저 헬스정보없으면 세팅 안함
-					// userVO에 세팅
-					user.setHealthNum(h.getHealthNum());
-					user.setHeight(h.getHeight());
-					user.setWeight(h.getWeight());
-					user.setFat(h.getFat());
-					user.setGoal(h.getGoal());
-					user.setReason(h.getReason());
-					user.setCheckDate(h.getCheckDate());
-				}
-				System.out.println(user);
-				int check2 = user.getStatus();
+System.out.println("loginUser : " + user);
+if (user != null) { // 회원테이블에 존재 할때
+	// 건강 정보 셀렉.
+	Health h = healthService.selectHealth(user.getUserNum());
+	if (h != null) {
+		// 유저 헬스정보없으면 세팅 안함
+		// userVO에 세팅
+		user.setHealthNum(h.getHealthNum());
+		user.setHeight(h.getHeight());
+		user.setWeight(h.getWeight());
+		user.setFat(h.getFat());
+		user.setGoal(h.getGoal());
+		user.setReason(h.getReason());
+		user.setCheckDate(h.getCheckDate());
+	}
+	System.out.println(user);
+	int check2 = user.getStatus();
 
-				if (check2 == 1) { // 일반 회원일때
-					model.addAttribute("loginUser", user);
-					return "user/mypage";
+	if (check2 == 1) { // 일반 회원일때
+		model.addAttribute("loginUser", user);
+		return "user/mypage";
 
-				} else if (check2 == 2) {
-					// pt 회원일때
-					model.addAttribute("loginUser", user);
+	} else if (check2 == 2) {
+		// pt 회원일때
+		model.addAttribute("loginUser", user);
 
-					// PT마이페이지로
-					return "pt/mypage";
+		// PT마이페이지로
+		return "pt/mypage";
 
-				} else if (check2 == 4) {
-					model.addAttribute("msg", "이메일 인증을 하지 않으셨습니다."
-					+ "이메일이 도착하지 않았다면 onefit@onefit.com으로 문의 해주세요.");
-					return "redirect:goHome.do";
-				} else {
+	} else if (check2 == 4) {
+		model.addAttribute("msg", "이메일 인증을 하지 않으셨습니다."
+		+ "이메일이 도착하지 않았다면 onefit@onefit.com으로 문의 해주세요.");
+		return "redirect:goHome.do";
+	} else {
 
-					// 회원가입만 하고 결제 안한 회원일때(관리자도 여기 포함)
-					model.addAttribute("loginUser", user);
-					System.out.println("결제안한회원 유저 : " + user);
-					// 일반회원 중 관리자일 때
-					if (user.getUserId().equals("manager")) {
-						return "redirect:qlist.do";
+		// 회원가입만 하고 결제 안한 회원일때(관리자도 여기 포함)
+		model.addAttribute("loginUser", user);
+		System.out.println("결제안한회원 유저 : " + user);
+		// 일반회원 중 관리자일 때
+		if (user.getUserId().equals("manager")) {
+			return "redirect:qlist.do";
 
-					} else {
-						model.addAttribute("msg", "결제를 아직 하지 않으셨습니다. 결제 하시겠습니까?");
-						return "redirect:pay.do";
-					}
-				}
-			} else { // user가 널일때
-				model.addAttribute("msg", "아이디 혹은 비밀번호가 틀렸습니다.");
-				return "redirect:goHome.do";
-			}
+		} else {
+			model.addAttribute("msg", "결제를 아직 하지 않으셨습니다. 결제 하시겠습니까?");
+			return "redirect:pay.do";
+		}
+	}
+} else { // user가 널일때
+	model.addAttribute("msg", "아이디 혹은 비밀번호가 틀렸습니다.");
+	return "redirect:goHome.do";
+}
   ```
   
 * **일정** - 트레이너와 PT일정을 연동하여 예약 등록 및 취소가 가능하게 구현하였습니다.
