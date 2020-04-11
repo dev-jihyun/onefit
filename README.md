@@ -6,7 +6,7 @@
 ## Supported Modules
 |  <center>구분</center> |  <center>내용</center> |
 |:--------|:--------|
-|**OS** | window10 |
+|**OS** | window |
 |**개발환경** | Java 1.8, eclipse 2018-09, oracle 11g R2, SpringFramework 5.2.2, STS 3.9.11, HTML5, CSS, JavaScript, Ajax |
 |**DB** | Oracle 11g, sql Developer |
 |**WAS** | Apache Tomcat 8 |
