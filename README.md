@@ -4,15 +4,17 @@
 * 제작인원 : 4명
 
 ## Supported Modules
-* OS : window10
-* 개발환경 : Java 1.8, eclipse 2018-09, oracle 11g R2, SpringFramework 5.2.2, STS 3.9.11, HTML5, CSS, JavaScript, Ajax
-* DB : Oracle 11g, sql Developer
-* WAS : Apache Tomcat 8
-* DB-design Tool : Erdcloud
-* UI-design Tool : kakaoOven
-* Library : MyBatis, Maven, Bootstrap4, jQuery 3.4.1
-* version control system : GitHub
-* API : quillAPI(텍스트 에디터), fullCalendar4.3.1(달력 API), 1:1문의 채팅 api, 카카오 결제 api
+|  <center>구분</center> |  <center>내용</center> |
+|:--------|:--------|
+|**OS** | window10 |
+|**개발환경** | Java 1.8, eclipse 2018-09, oracle 11g R2, SpringFramework 5.2.2, STS 3.9.11, HTML5, CSS, JavaScript, Ajax |
+|**DB** | Oracle 11g, sql Developer |
+|**WAS** | Apache Tomcat 8 |
+|**DB-design Tool** | Erdcloud |
+|**UI-design Tool** | kakaoOven |
+|**Library** | MyBatis, Maven, Bootstrap4, jQuery 3.4.1 |
+|**version control system** | GitHub |
+|**API** | quillAPI(텍스트 에디터), fullCalendar4.3.1(달력 API), 1:1문의 채팅 api, 카카오 결제 api |
 
 ## 주요이슈
 * 일정 선택 조건 설정에 중점을 두어 개발하였습니다.
